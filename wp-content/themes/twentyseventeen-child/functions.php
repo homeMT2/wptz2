@@ -10,8 +10,14 @@ if ( function_exists( 'add_image_size' ) ) {
 
 add_action( 'wp_enqueue_scripts', 'theme_name_scripts' );
 
+add_action( 'admin_enqueue_scripts', 'admin_theme_name_scripts' );
+
 function theme_name_scripts() {
     wp_enqueue_script( 'script', get_site_url() . '/wp-content/themes/twentyseventeen-child/js/functions.js', array(), '1.0.0', true );
+}
+
+function admin_theme_name_scripts() {
+    wp_enqueue_script( 'admin_script', get_site_url() . '/wp-content/themes/twentyseventeen-child/js/admin.js', array(), '1.0.0', true );
 }
 
 function ajax_get_audio() {
@@ -217,23 +223,6 @@ function audio_file_display( $post )
         <input type="button" id="meta-file-button" class="button" value="Open AUDIO" />
     </p>
 
-    <script>
-        jQuery('#meta-file-button').click(function() {
-
-            var send_attachment_bkp = wp.media.editor.send.attachment;
-
-            wp.media.editor.send.attachment = function(props, attachment) {
-
-                jQuery('#meta-file').val(attachment.url);
-                wp.media.editor.send.attachment = send_attachment_bkp;
-            }
-
-            wp.media.editor.open();
-
-            return false;
-        });
-    </script>
-
     <?php
 
 }
@@ -280,24 +269,6 @@ function audio_img_display( $post ) {
         <input type="text" name="meta-image" id="meta-image" class="meta_image" value="<?php echo $url; ?>" />
         <input type="button" id="meta-image-button" class="button" value="Open IMG" />
     </p>
-
-    <script>
-        jQuery('#meta-image-button').click(function() {
-
-            var send_attachment_bkp = wp.media.editor.send.attachment;
-
-            wp.media.editor.send.attachment = function(props, attachment) {
-
-                jQuery('#meta-image').val(attachment.url);
-                jQuery('#meta-image-preview').attr('src',attachment.url);
-                wp.media.editor.send.attachment = send_attachment_bkp;
-            }
-
-            wp.media.editor.open();
-
-            return false;
-        });
-    </script>
 
     <?php
 
