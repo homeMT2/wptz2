@@ -1,0 +1,176 @@
+/*
+Theme Name: Unite Child
+Theme URI: http://colorlib.com/wp/unite
+Author: Colorlib
+Author URI: http://colorlib.com/wp/
+Description: Unite is a clean, modern and fully responsive WordPress wedding theme built using Bootstrap 3 which makes it optimized for tablets and mobile. It is a highly customizable eCommerce theme with unlimited color variations that can be tweaked via simple yet powerful Theme Options. Theme has a built-in Popular Posts Widget, Infinite Scroll (powered by Jatpack) and translation support. It's now available in German and French. Theme features fancy image slider, SEO friendly structure, logo support, social links and widgetized homepage.  This theme was built to be used for wedding related websites but can be tweaked to be used as any other image-centric blog such as travel. Unite theme now supports WooCommerce to create your own eStore.
+Version: 2.0.2
+Template: unite
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: unite
+Domain Path: /languages/
+Tags: purple, light, white, gray, one-column, two-columns, right-sidebar, fluid-layout, responsive-layout, responsive-layout, translation-ready, custom-background, custom-colors, custom-menu, featured-images, full-width-template, post-formats, theme-options, threaded-comments
+
+
+This theme, like WordPress, is licensed under the GPL.
+
+Unite is based on Underscores http://underscores.me/, (C) 2012-2015 Automattic, Inc.
+
+*/
+
+
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700');
+
+body {
+    font-family: 'Lato', sans-serif;
+}
+
+
+/*--- HOME ---*/
+.front-page {
+    padding: 0 15px;
+}
+
+.front-page .center {
+    margin: 0 auto;
+}
+
+.front-page .movie {
+    padding: 20px 20px;
+    box-shadow: 3px 2px 8px 2px rgba(0, 0, 0, 0.25);
+    margin: 0 0 20px 0;
+}
+
+.front-page .movie-title {
+    min-height: 66px;
+}
+
+.front-page .movie .thumbnail {
+    margin: 0 auto;
+    max-width: 200px;
+    max-height: 275px;
+    height: auto;
+    width: 100%;
+    display: block;
+}
+
+.front-page .more-link {
+    display: block;
+}
+
+.front-page .movie-content {
+    min-height: 140px;
+}
+
+/* Labels */
+.film-info .film-label {
+    margin: 0 10px 5px 0;
+}
+
+.film-info .term-element i {
+    padding-right: 10px;
+}
+
+.film-info .term-element {
+    padding: 5px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    line-height: 1;
+    margin: 0 10px 5px 0;
+}
+
+.film-info .term-element:last-child {
+    margin: 0 0 5px 0;
+}
+
+.film-info .country-element {
+    background: rgba(255, 160, 122, 0.1);
+    border: 1px solid rgb(255, 160, 122);
+}
+
+.film-info .genre-element {
+    background: rgba(154, 205, 50, 0.1);
+    border: 1px solid rgb(154, 205, 50);
+}
+
+.film-info .genre-price {
+    background: rgba(0, 191, 255, 0.1);
+    border: 1px solid rgb(0, 191, 255);
+}
+
+.film-info .genre-release {
+    background: rgba(240, 230, 140, 0.1);
+    border: 1px solid rgb(240, 230, 140);
+}
+
+/* Single post */
+.movie-single {
+    margin-top: 20px;
+    margin-bottom: 40px;
+    box-shadow: 3px 2px 8px 2px rgba(0, 0, 0, 0.25);
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.movie-single .site-main {
+    padding: 0 15px;
+}
+
+.movie-single .thumbnail {
+    display: block;
+    margin: 0 auto;
+}
+
+.movie-single .nav-previous {
+    float: left;
+}
+
+.movie-single .nav-next {
+    float: right;
+}
+
+.movie-single footer.entry-meta,
+.movie-single .posted-on .updated,
+.movie-single .post-navigation .screen-reader-text {
+    display: none;
+}
+
+.movie-single .navigation {
+    margin: 20px 0;
+}
+
+.movie-single .navigation:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+/* Footer */
+.site-footer {
+    padding: 16px 0;
+    background-color: #f8f8f8;
+    border-top: 1px solid #e7e7e7;
+}
+
+.site-footer .copyright {
+    padding: 0 30px;
+    text-align: center;
+}
+
+/* Responsive */
+@media all and (max-width: 768px) {
+    .movie-single {
+        margin: 20px 15px 40px 15px;
+    }
+
+    .movie-single .nav-next,
+    .movie-single .nav-previous {
+        float: none;
+        margin: 5px 0;
+        text-align: center;
+    }
+}
+
+/* END */
