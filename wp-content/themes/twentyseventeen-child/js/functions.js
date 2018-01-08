@@ -16,7 +16,9 @@ jQuery(document).ready(function($){
                 'action'    : 'loadmore',
                 'offset'    : offset,
                 'order'     : $('#order').val(),
-                'orderby'   : $('#orderby').val()
+                'orderby'   : $('#orderby').val(),
+                'author'    : $('#author').val(),
+                'style'     : $('#style').val()
             },
             success: function(results) {
                 $('#audio').html( $('#audio').html() + results );

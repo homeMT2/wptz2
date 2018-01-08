@@ -24,6 +24,22 @@ function ajax_get_audio() {
     get_audio( $_POST );
 }
 
+function get_authors() {
+    $meta = get_meta_values( 'audio_author', 'audio' );
+    return array_unique( $meta );
+}
+
+function get_styles() {
+    $terms = get_terms(
+        array(
+            'taxonomy' => 'style',
+            'hide_empty' => false,
+        )
+    );
+
+    return $terms;
+}
+
 function get_audio( $attr = array() )
 {
     $number_posts   = ( isset( $attr['number_posts'] ) ) ? $attr['number_posts'] : 4;
@@ -48,6 +64,30 @@ function get_audio( $attr = array() )
 
     if( $orderby == 'audio_author' ) {
         $args['meta_key'] = $orderby;
+    }
+
+    if( $attr['author'] != '' ) {
+
+        $args['meta_query'] = array(
+            array(
+                'key' => 'audio_author',
+                'value' => $attr['author'],
+                'compare' => '=',
+            )
+        );
+
+    }
+
+    if( $attr['style'] != '' ) {
+
+        $args['tax_query'] = array(
+            array(
+                'taxonomy' => 'style',
+                'field' => 'term_id',
+                'terms' => $attr['style'],
+            )
+        );
+
     }
 
     global $post;
@@ -118,6 +158,38 @@ function audio_taxonomies()
             'update_count_callback' => '_update_post_term_count',
             'query_var' => true,
             'rewrite' => array( 'slug' => 'tag' ),
+        )
+    );
+
+
+    $labels = array(
+        'name' => _x( 'Style', 'style' ),
+        'singular_name' => _x( 'Style', 'style' ),
+        'search_items' =>  __( 'Search Styles' ),
+        'popular_items' => __( 'Popular Styles' ),
+        'all_items' => __( 'All Styles' ),
+        'parent_item' => null,
+        'parent_item_colon' => null,
+        'edit_item' => __( 'Edit Style' ),
+        'update_item' => __( 'Update Style' ),
+        'add_new_item' => __( 'Add New Style' ),
+        'new_item_name' => __( 'New Style Name' ),
+        'separate_items_with_commas' => __( 'Separate style with commas' ),
+        'add_or_remove_items' => __( 'Add or remove styles' ),
+        'choose_from_most_used' => __( 'Choose from the most used styles' ),
+        'menu_name' => __( 'Style' ),
+    );
+
+    register_taxonomy(
+        'style',
+        'audio',
+        array(
+            'hierarchical' => false,
+            'labels' => $labels,
+            'show_ui' => true,
+            'update_count_callback' => '_update_post_term_count',
+            'query_var' => true,
+            'rewrite' => array( 'slug' => 'style' ),
         )
     );
 }
@@ -210,16 +282,24 @@ function audio_file_display( $post )
 
     wp_nonce_field( 'case_study_bg_submit', 'case_study_bg_nonce' );
 
-    $meta = get_post_meta( $post->ID ); ?>
+    $meta = get_post_meta( $post->ID );
+
+    ?>
+
     <p>
         <?php
             $url = '';
+            $size = 0;
+
             if ( isset ( $meta['meta-file'] ) ) {
                 $url = $meta['meta-file'][0];
+                $size = $meta['meta-file-size'][0];
             }
         ?>
 
         <input type="text" name="meta-file" id="meta-file" class="meta_file" value="<?php echo $url; ?>" />
+        <input type="text" name="meta-file-size" id="meta-file-size" class="meta_file_size" disabled value="<?php echo $size; ?>" />
+
         <input type="button" id="meta-file-button" class="button" value="Open AUDIO" />
     </p>
 
@@ -238,7 +318,12 @@ function audio_file_save( $post_id )
     }
 
     if( isset( $_POST[ 'meta-file' ] ) ) {
+
         update_post_meta( $post_id, 'meta-file', $_POST[ 'meta-file' ] );
+
+        $audio_url = get_post_meta( get_the_ID(), 'meta-file', TRUE );
+        $size = file_size_convert( strlen( file_get_contents( $audio_url ) ) );
+        update_post_meta( $post_id, 'meta-file-size', $size );
     }
 }
 
@@ -292,6 +377,24 @@ function audio_img_save( $post_id ) {
 
 add_action( 'save_post', 'audio_img_save', 30 );
 
+function get_meta_values( $key = '', $type = 'post', $status = 'publish' ) {
+
+    global $wpdb;
+
+    if( empty( $key ) ) {
+        return;
+    }
+
+    $r = $wpdb->get_col( $wpdb->prepare( "
+        SELECT pm.meta_value FROM {$wpdb->postmeta} pm
+        LEFT JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+        WHERE pm.meta_key = '%s'
+        AND p.post_status = '%s'
+        AND p.post_type = '%s'
+    ", $key, $status, $type ) );
+
+    return $r;
+}
 
 function get_file_size($url)
 {
@@ -360,95 +463,3 @@ function file_size_convert($bytes)
     }
     return $result;
 }
-
-
-
-/* !!! WARRING !!! */
-/*--- OLD FUNC ---*/
-/* Meta Box Audio */
-function audio_file_display_old( $post )
-{
-
-    wp_nonce_field( plugin_basename(__FILE__), 'wp_custom_attachment_nonce' );
-
-    $size = esc_html( get_post_meta( $post->ID, 'audio_size', true ) );
-    $name = esc_html( get_post_meta( $post->ID, 'audio_name', true ) );
-    $file = esc_html( get_post_meta( $post->ID, 'audio_file', true ) );
-
-    ?>
-
-    <p class="description">
-        Upload your AUDIO here.
-    </p>
-
-    <input type="text" id="wp_custom_attachment" name="audio_file" value="<?php echo $file; ?>" />
-
-    <p class="description">
-
-        AUDIO file size.
-    </p>
-
-    <input type="text" name="audio_size" value="<?php echo $size; ?>" disabled />
-    <input type="hidden" name="audio_name" value="<?php echo $name; ?>" disabled />
-
-    <?php
-}
-
-function audio_file_save_old()
-{
-    global $post;
-
-    //show( $_FILES );
-
-    update_post_meta( $post->ID, 'audio_size', $_FILES['audio_file']['size'] );
-    update_post_meta( $post->ID, 'audio_name', $_FILES['audio_file']['name'] );
-
-    if(!wp_verify_nonce($_POST['wp_custom_attachment_nonce'], plugin_basename(__FILE__))) {
-        return $post->ID;
-    }
-
-    if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-        return $post->ID;
-    }
-
-    if( 'audio' == $_POST['post_type'] ) {
-        if( !current_user_can('edit_page', $post->ID) ) {
-            return $post->ID;
-        }
-    }
-    else {
-        if( !current_user_can( 'edit_page', $post->ID ) ) {
-            return $post->ID;
-        }
-    }
-
-    if(!empty($_FILES['audio_file']['name'])) {
-
-        $supported_types = array('audio/mpeg');
-
-        $arr_file_type = wp_check_filetype( basename( $_FILES['audio_file']['name'] ) );
-        $uploaded_type = $arr_file_type['type'];
-
-        if( in_array($uploaded_type, $supported_types) ) {
-
-            $upload = wp_upload_bits(
-                $_FILES['audio_file']['name'],
-                null,
-                file_get_contents( $_FILES['audio_file']['tmp_name'] )
-            );
-
-            if(isset($upload['error']) && $upload['error'] != 0) {
-                wp_die('There was an error uploading your file. The error is: ' . $upload['error']);
-            }
-            else {
-                add_post_meta($post->ID, 'audio_file', $upload);
-                update_post_meta($post->ID, 'audio_file', $upload);
-            }
-        }
-        else {
-            wp_die("The file type that you've uploaded is not a MP3.");
-        }
-    }
-}
-
-//add_action('save_post', 'audio_file_save', 20 );
